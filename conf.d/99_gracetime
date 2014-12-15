@@ -1,0 +1,39 @@
+#!/bin/sh
+
+# Don't shutdown the first time all scripts exit successfully, but require N 
+# successful runs before shutting down.
+
+# This script requires an additional cronjob to delete gracetime.txt in the
+# project folder periodically. Select period a little greater than:
+#   N_REQUIRED * PERIOD_idle-shutdown 
+#
+# Example:
+# */15 * * * * rm -f /root/idle-shutdown/gracetime.txt
+
+
+# require assuming idle N times before really powering off
+N_REQUIRED=5
+
+CWD="${0%/*}/.."
+FILE="$CWD/gracetime.txt"
+
+# create file if non-existent
+if [ ! -f "$FILE" ]; then
+    touch "$FILE"
+fi
+
+
+N=1
+
+# source file, will set N=?
+. "$FILE"
+
+if [ "$N" -ge "$N_REQUIRED" ]
+then
+    rm "$FILE"
+    exit 0
+else
+    echo gracetime not yet reached, still needs $(($N_REQUIRED - $N)) checks
+    echo "N=$(($N + 1))" > "$FILE"
+    exit 1
+fi

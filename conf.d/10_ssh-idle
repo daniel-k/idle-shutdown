@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# Check for extablished SSH sessions
+
+if [ -z "$(netstat -p | grep ssh | grep ESTABLISHED)" ]
+then
+    exit 0
+else
+    exit 1
+fi

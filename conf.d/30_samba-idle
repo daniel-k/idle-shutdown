@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# Check samba service for activity. Please test this before relying on it. 
+
+SMBSTATUS=/usr/bin/smbstatus
+
+if [ -z "$($SMBSTATUS | tail -n 2 | grep 0x)" ]
+then
+    exit 0
+else
+    exit 1
+fi

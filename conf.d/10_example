@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# minimal example as a starting point for own scripts
+
+if [ -n "YOUR CONDITION HERE" ]
+then
+    exit 0
+else
+    exit 1
+fi

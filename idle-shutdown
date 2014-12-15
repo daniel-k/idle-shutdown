@@ -1,0 +1,31 @@
+#!/bin/sh
+
+# action to perfom when everything is idle (path to executable)
+ACTION="/sbin/poweroff"
+
+CWD="${0%/*}/conf.d"
+
+for script in "$CWD"/*
+do
+    # prevent recursion
+    if [ "$(basename $script)" = "$(basename $0)" ]; then
+        continue
+    fi
+
+    # skip non-executable files
+    if [ ! -x "$script" ]; then
+        continue
+    fi
+
+    # check if service is not idle
+    if ! $script
+    then
+        service="$(echo $script | cut -d '_' -f 2)"
+        echo "abort because $service is not idle"
+
+        exit 1
+    fi
+done
+
+# all services are idle, so power off
+$ACTION

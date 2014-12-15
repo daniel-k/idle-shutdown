@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# Check if certain machines are pingable, don't shutdown if any of them is online.
+
+HOSTS=""
+
+for host in $HOSTS
+do
+    if [ -n "$(ping -c 1 $host | grep '1 received' )" ];
+    then
+        exit 1
+    fi
+done
+
+exit 0

@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Check traffic on a network interface against a given threshold.
+#
+# REQUIRES package bwm-ng. Ubuntu: $ apt-get install bwm-ng
+
+# interface to monitor (just one)
+INTERFACE=eth0
+
+# threshold in bytes/sec
+THRESHOLD=50000
+
+# path to bwm-ng
+BWM=/usr/bin/bwm-ng
+
+# check if bwm-ng is installed
+if [ ! -x "$BWM" ]; then
+	exit 0
+fi
+
+COMMAND="$BWM -o csv -c 10 -t 1000 -I $INTERFACE -T avg | grep $INTERFACE"
+OUT="$($COMMAND)"
+BW="$(echo "$OUT" | grep $INTERFACE | cut -d ';' -f 5 | cut -d '.' -f 1 | tail -n 1 )"
+
+if [ "$BW" -lt "$THRESHOLD" ]
+then
+    exit 0
+else
+    exit 1
+fi

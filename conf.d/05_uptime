@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# Check for uptime greater than threshold given in seconds. This is needed so
+# that the machine doesn't shut down immediately after boot when the other
+# conditions might not been met yet (e.g. SSH session established).
+
+THRESHOLD=$((15*60))	# 15 minutes
+
+if [ "$(cat /proc/uptime | cut -d '.' -f 1)" -gt "$THRESHOLD" ]
+then
+    exit 0
+else
+    exit 1
+fi
